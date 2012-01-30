@@ -1,0 +1,28 @@
+#mask {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:9000;
+  background-color:#000;
+  display:none;
+}
+  
+#boxes .window {
+  position:absolute;
+  left:0;
+  top:0;
+  border: 2px solid #333333;
+  width:400px;
+  height:200px;
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+
+#boxes #dialog {
+  border: 1px solid #666666;
+  width: 400px; 
+  height: 200px;
+  padding:10px;
+  background-color:#ffffff;
+}

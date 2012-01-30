@@ -1,0 +1,416 @@
+/*
+ * GamePanelX Pro
+ * Complete Game and Voice server management tool
+ * 
+ * Copyright(C) 2009-2010 GamePanelX Pro.  All Rights Reserved. 
+ * 
+ * Email: support@gamepanelx.com
+ * Website: http://www.gamepanelx.com
+ * 
+*/
+
+body
+{
+    background-color: #bfbfbf;
+    font-family: Arial,Verdana,Times;
+    font-size: 12px;
+    color: black;
+}
+
+/* Main table */
+.center_table
+{
+    font-family: Arial;
+    font-size: 14px;
+    background-color: #f3f3f3;
+}
+
+
+
+
+/*
+ *   Links
+*/
+a
+{
+    text-decoration: none;
+}
+a:link
+{
+    color: #666666;
+}
+a:active
+{
+    color: #666666;
+}
+a:visited
+{
+    color: #666666;
+}
+a:hover
+{
+    color: #666666;
+    text-decoration: underline;
+}
+
+
+/* Text Areas */
+textarea
+{
+    font-family: Arial;
+    font-size: 12px;
+    color: #000000;
+    width: 95%;
+    height: 100%;
+    padding: 4px;
+    background-color: #FFFFFF;
+    border: 1px solid lightgrey;
+}
+
+/* All tables */
+table,tr,td,tbody
+{
+    font-family: Arial,Verdana;
+    font-size: 9pt;
+}
+
+
+/* ****************************************************************** */
+
+
+/*
+ *  
+ *    Input Boxes
+ * 
+ * 
+*/
+
+/* Normal Text Box */
+.textbox_normal
+{
+    height: 28px;
+    background-color: white;
+    color: black;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: normal;
+    
+    border: 1px solid #689aff;
+    padding:2px;
+}
+
+/* Important Text Box */
+.textbox_important
+{
+    height: 28px;
+    background-color: #fffece;
+    color: black;
+    font-family: Arial;
+    font-size: 10pt;
+    font-weight: bold;
+    border: 1px solid #689aff;
+}
+
+/* Focused boxes */
+.textbox_normal:focus
+{
+    border: 2px solid #689aff;
+    background-color: #fffece;
+}
+.textbox_important:focus
+{
+    border: 2px solid #689aff;
+    background-color: #fffece;
+}
+
+
+
+
+
+
+/* Submit Buttons */
+.buttonz
+{
+    width: 170px;
+}
+
+
+
+
+
+/*
+ *  
+ *    Table Setup
+ * 
+ * 
+*/
+
+/* All normal text */
+.normal
+{
+    height: 25px;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: normal;
+    color: black;
+}
+
+/* All normal tables */
+.tablez
+{
+    font-family: Arial;
+    font-size: 14px;
+    background-color: #eaeaea;
+    border: 1px solid #8c8c8c;
+}
+
+.table_title
+{
+    height: 28px;
+    background-image: url('../img/grad_30px-new.png');
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+
+/* Logged in text */
+.navigation
+{
+    background-image: url('../img/nav_grad_40px.png');
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: normal;
+    color: black;
+}
+
+
+/* Navigation Links */
+.nav_titles
+{
+    font-family: Arial,Verdana;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    vertical-align: middle;
+}
+
+
+
+/* Location links (Home > Users > etc) */
+.location
+{
+    font-family: Arial,Verdana,Times;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+}
+
+/* For all table descriptions... Username:, Password:, etc */
+.description
+{
+    font-family: Arial,Verdana,Times;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+}
+
+/* Info Box */
+.infobox
+{
+    border: 2px dashed black;
+    background-color: #fffff1;
+    font-family: Arial,Verdana,Times;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+
+
+
+
+/* Footer Text (copyright) */
+.footer_text
+{
+    background-image: url('../img/nav_grad_40px.png');
+    font-family: Verdana;
+    font-size: 7pt;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Support Tickets */
+.ticket_last_response
+{
+    font-family: Arial;
+    font-size: 12px;
+    color: #000000;
+    width: 95%;
+    height: 100%;
+    padding: 4px;
+    background-color: #cddae3;
+    /* border: 1px solid #666666; */
+    border: 0px;
+}
+
+.ticket_response
+{
+    font-family: Arial;
+    color: #000000;
+    width: 95%;
+    height: 100%;
+    padding: 4px;
+    background-color: #FFFFFF;
+    border: 1px solid lightgrey;
+}
+
+.ticket_notes
+{
+    font-family: Arial;
+    color: #000000;
+    width: 95%;
+    height: 100%;
+    padding: 4px;
+    background-color: #fffece;
+    border: 1px solid lightgrey;
+}
+
+
+
+
+
+/*
+ *  
+ *    Main page icon text
+ * 
+ * 
+*/
+.icon_text
+{
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: #666666;
+}
+
+/* Popup Bubble */
+.bubbleInfo
+{
+    position: relative;
+}
+
+
+.popup
+{
+    position: absolute;
+    display: none;
+    text-align: left;
+    
+    background-color: #fffff1;
+    border: 1px solid black;
+    
+    width: 200px;
+}
+
+
+
+/* JQuery stuff */
+#jsddm
+{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align:middle;
+    height:43px;
+    line-height: 43px;
+}
+
+#jsddm li
+{
+    float: left;
+    list-style: none;
+    font: 12px Tahoma, Arial;
+    vertical-align: middle;
+    height: 43px;
+    line-height: 43px;
+    background-color: #000000;
+    text-align: left;
+}
+
+#jsddm li a
+{
+    display: block;
+    background: #20548E;
+    text-decoration: none;
+
+    /*border-right: 1px solid white;
+    border-left: 1px solid white;*/
+    width: 90px;
+    color: #000000;
+    white-space: nowrap;
+    background-image: url('../img/nav/bg.png');
+    text-align: left;
+    
+    /* Padding left and right */
+    padding-left: 12px;
+    padding-right: 12px;
+    
+    /*height: 43px;*/
+    vertical-align: middle;
+    height:43px;
+    line-height: 43px;
+}
+
+#jsddm li a:hover
+{
+    background: #1A4473;
+    background-image: url('../img/nav/hover.png');
+    height: 43px;
+    line-height: 43px;
+    vertical-align:middle;
+}
+		
+#jsddm li ul
+{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    visibility: hidden;
+    border-top: 1px solid white;
+    height: 43px;
+    line-height: 43px;
+    vertical-align:middle;
+}
+		
+#jsddm li ul li
+{
+    float: none;
+    display: inline;
+    vertical-align:middle;
+    height: 43px;
+    line-height: 43px;
+}
+
+/* Dropdown list */
+#jsddm li ul li a
+{
+    width: auto;
+    background: white;
+    padding: 5px 12px;
+    vertical-align:middle;
+    height: 20px;
+    line-height: 20px;
+}
+
+/* Dropdown list hover */
+#jsddm li ul li a:hover
+{
+    background: orange;
+    color: black;
+    vertical-align:middle;
+    height: 20px;
+    line-height: 20px;
+}
