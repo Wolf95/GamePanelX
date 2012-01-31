@@ -116,7 +116,7 @@ elseif(isset($_POST['update']))
 
 
     // POST Values (escape all of them)    
-    $post_cur_pass      = mysql_real_escape_string($_POST['cur_password']);
+    $post_cur_pass      = $_POST['cur_password'];
     $post_new_pass      = $_POST['new_password'];
     $post_new_pass_conf = $_POST['new_password_confirm'];
 
@@ -146,7 +146,8 @@ elseif(isset($_POST['update']))
     if(!empty($post_new_pass) && !empty($post_new_pass_conf))
     {
         // Check if the current password is OK
-        $result_curpass = @mysql_query("SELECT COUNT(id) AS thecount FROM clients WHERE id = '$this_clientid' AND password = MD5('$post_cur_pass')");
+        $cur_pass_esc     = mysql_real_escape_string($post_cur_pass);
+        $result_curpass   = @mysql_query("SELECT COUNT(id) AS thecount FROM clients WHERE id = '$this_clientid' AND password = MD5('$cur_pass_esc')");
         
         while($row_curpass = mysql_fetch_array($result_curpass))
         {
