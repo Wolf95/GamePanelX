@@ -1,1 +1,26 @@
 GamePanelX is the original free and open source game control panel.  It has been actively maintained since 2007.  
+
+------------------------------------------------------------------------
+INSTALLING
+------------------------------------------------------------------------
+- Download the complete Master tarball (see the Products page: http://www.gamepanelx.com/products.html)
+- Extract the tarball locally
+- Upload all files to your Linux hosting server
+- Create a new database for gamepanelx
+- Go go http://[yoursite]/gpx/install/
+- Fill out everything
+- Delete the "install" directory from your server
+- Login 
+
+
+------------------------------------------------------------------------
+UPDATING
+------------------------------------------------------------------------
+
+- Download the complete Master tarball (see the Products page: http://www.gamepanelx.com/products.html)
+- Extract the tarball locally
+- REMOVE the "include/db.php" file
+- Upload all files over your old installation
+- (optional but recommended): Delete all files inside "templates_c" and "admin/templates_c"
+- Run the "install/update.php" script
+- Delete the "install" directory from your server
