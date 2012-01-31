@@ -40,22 +40,10 @@ require('include/config.php');
 // Page Title
 $smarty->assign('pagetitle', 'Edit Settings');
 
-########################################################################
-
-// Check license variable
-if($gpxseckey_T2V1lmkWLli04Z7q3FT != 'F9hJt6up1h80qk9REDD2xyA89TfI185gwtLXJsSMhc61fWv5T33548rLqtW5MWGjkgFl8ISzsoF8491IT2V1lmkWLli04Z7q3FTls169B8PmTx0lRZet777Pr40p7R01FkQFymp1Z629GG5dEW8nI3')
-{
-    die('Invalid license');
-}
-
-########################################################################
-
 // This client ID
 $this_clientid = $_SESSION['gpx_userid'];
 
 ########################################################################
-
-
 
 
 // Infobox from the URL
@@ -76,8 +64,6 @@ if(!empty($url_info))
         }
     }
 }
-
-
 
 ########################################################################
 
