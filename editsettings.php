@@ -130,7 +130,7 @@ elseif(isset($_POST['update']))
 
 
     // POST Values (escape all of them)    
-    $post_cur_pass      = $_POST['cur_password'];
+    $post_cur_pass      = mysql_real_escape_string($_POST['cur_password']);
     $post_new_pass      = $_POST['new_password'];
     $post_new_pass_conf = $_POST['new_password_confirm'];
 
