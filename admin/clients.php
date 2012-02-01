@@ -128,7 +128,7 @@ while ($line = mysql_fetch_assoc($result))
 $smarty->assign('users', $value);
 
 // Total pages
-$total_pages  = 8;//round($total_found / $per_page);
+$total_pages  = round($total_found / $per_page);
 $start_page   = $start_page + 1;
 
 $smarty->assign('page', $start_page);
