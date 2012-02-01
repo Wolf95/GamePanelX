@@ -39,16 +39,8 @@ require('../include/config.php');
 
 ########################################################################
 
-// Check license variable
-if($gpxseckey_T2V1lmkWLli04Z7q3FT != 'F9hJt6up1h80qk9REDD2xyA89TfI185gwtLXJsSMhc61fWv5T33548rLqtW5MWGjkgFl8ISzsoF8491IT2V1lmkWLli04Z7q3FTls169B8PmTx0lRZet777Pr40p7R01FkQFymp1Z629GG5dEW8nI3')
-{
-    die('Invalid license');
-}
-
-########################################################################
-
-$url_id   = $_GET['id'];
-$url_type = $_GET['type'];
+$url_id     = $_GET['id'];
+$url_type   = $_GET['type'];
 
 $allowed_types = array('game','voip','other');
 
@@ -82,6 +74,77 @@ $smarty->assign('pagetitle', 'View Servers');
 // Assign Server Type
 $smarty->assign('type', $url_type);
 
+########################################################################
+
+//
+// Sort By from URL
+//
+if(isset($_GET['order']))
+{
+    $get_order    = $_GET['order'];
+    $allowed_ord  = array('id','server','username','info','description');
+    
+    if(!in_array($get_order, $allowed_ord)) die('Invalid order by!');
+    
+    // Connection Info
+    if($get_order == 'info')
+    {
+        $sort_by  = strtoupper($_GET['sort']);
+        $order_by = 'network.ip ' . $sort_by . ',servers.port ' . $sort_by . ' ';
+    }
+    // Username
+    elseif($get_order == 'username')
+    {
+        $sort_by  = strtoupper($_GET['sort']);
+        $order_by = 'clients.username ' . $sort_by . ' ';
+    }
+    // All others
+    else
+    {
+        $order_by = 'servers.' . $get_order;
+        
+        if(isset($_GET['sort']))
+        {
+            $sort_by  = strtoupper($_GET['sort']);
+            if($sort_by == 'ASC' || $sort_by == 'DESC')
+              $order_by .= ' ' . $sort_by . ' ';
+        }
+        else $order_by .= ' ASC ';
+    }
+}
+// Default to ID
+else
+{
+    $order_by = 'servers.id DESC';
+}
+
+// Assign order and sort
+$smarty->assign('s_order', $get_order);
+$smarty->assign('s_sort', strtolower($sort_by));
+
+########################################################################
+
+// Hardcoded for now
+$per_page = 30;
+
+//
+// Paging
+//
+if(isset($_GET['p']) && is_numeric($_GET['p']))
+{
+    
+    
+    $start_page = $_GET['p'];
+    
+    // Subtract 1 so pages start at 1, now 0
+    if($start_page >= 1) $start_page--;
+    
+    $sql_limit  = $start_page * $per_page . ',' . $per_page;
+}
+// Default
+else $sql_limit = '0,' . $per_page;
+
+########################################################################
 
 // Connect to the database
 $db = @mysql_connect($config['sql_host'],$config['sql_user'],$config['sql_pass']) or die('<center><b>Error:</b> <i>servers.php</i>: Failed to connect to the database!</center>');
@@ -108,16 +171,30 @@ $query_servers = "SELECT
                       servers.networkid = network.id 
                   $where_url 
                   ORDER BY 
-                      servers.id 
-                  DESC 
-                  LIMIT 0,30";
+                      $order_by 
+                  LIMIT 
+                      $sql_limit";
+
 $result = @mysql_query($query_servers) or die('<center><b>Error:</b> <i>servers.php:</i> Failed to list servers!</center>');
+
+$result_found = @mysql_query('SELECT FOUND_ROWS()');
+$row_found    = mysql_fetch_row($result_found);
+$total_found  = $row_found[0];
 
 while ($line = mysql_fetch_assoc($result))
 {
     // Smart loop
     $value[] = $line;
 }
+
+// Total pages
+$total_pages  = round($total_found / $per_page);
+$start_page   = $start_page + 1;
+
+$smarty->assign('page', $start_page);
+$smarty->assign('total_rows', $total_found);
+$smarty->assign('total_pages', $total_pages);
+
 
 ########################################################################
 

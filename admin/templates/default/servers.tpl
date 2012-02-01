@@ -38,10 +38,10 @@
     <table border="0" cellpadding="2" cellspacing="0" width="95%" align="center" class="tablez" style="border-radius:6px;">
       <tr class="table_title" height="30">
         <td align="left" width="20">&nbsp;</td>
-        <td align="left" width="170">{$lang.server}</td>
-        <td align="left" width="90">{$lang.username}</td>
-        <td align="left" width="150">{$lang.clsrv_conn_info}</td>
-        <td align="left" width="130">{$lang.description}</td>
+        <td align="left" width="170"><a href="servers.php?type={$type}&order=server&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.server}</a></td>
+        <td align="left" width="90"><a href="servers.php?type={$type}&order=username&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.username}</a></td>
+        <td align="left" width="150"><a href="servers.php?type={$type}&order=info&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.clsrv_conn_info}</a></td>
+        <td align="left" width="130"><a href="servers.php?type={$type}&order=description&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.description}</a></td>
         <td align="center" width="60">{$lang.status}</td>
         <td align="center" width="35">&nbsp;</td>
         <td align="center" width="40">&nbsp;</td>
@@ -106,7 +106,30 @@
     {/if}
     </table>
     
-    <br /><br />
+    <br />
+    
+    
+    <!-- PAGING -->
+    <div align="center">
+        <div style="width:90%;height:50px;text-align:center;">
+        {if $total_pages gt 1}
+        Page: 
+            {section name=foo start=1 loop=$total_pages}
+                {if $page eq $smarty.section.foo.index}
+                    {$smarty.section.foo.index}
+                {else}
+                    <a href="servers.php?type={$type}&p={$smarty.section.foo.index}" style="text-decoration:none;font-weight:bold;">{$smarty.section.foo.index}</a> 
+                {/if}
+            {/section}
+        <br /><br />
+        {/if}        
+        <span style="font-size:9pt;">Total Servers: {$total_rows}</span>
+        </div>
+    </div>
+    <!-- /PAGING -->
+    
+    
+    <br />
     
     <table border="0" cellpadding="10" cellspacing="5" align="center" width="500" style="width:500px;table-layout:fixed;word-wrap:break-word;text-align:center">
       <tr align="center">
