@@ -30,11 +30,11 @@
     
     <table border="0" cellpadding="2" cellspacing="0" width="600" align="center" class="tablez">
       <tr class="table_title" height="20">
-        <td align="left">{$lang.username}</td>
-        <td align="left" width="100">{$lang.first_name}</td>
-        <td align="left" width="100">{$lang.last_name}</td>
-        <td align="left">{$lang.email}</td>
-        <td align="center">{$lang.status}</td>
+        <td align="left"><a href="clients.php?order=username&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.username}</a></td>
+        <td align="left" width="100"><a href="clients.php?order=first_name&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.first_name}</a></td>
+        <td align="left" width="100"><a href="clients.php?order=last_name&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.last_name}</a></td>
+        <td align="left"><a href="clients.php?order=email_address&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.email}</a></td>
+        <td align="center"><a href="clients.php?order=status&sort={if $s_sort eq 'asc'}desc{else}asc{/if}&p={$page}" style="text-decoration:none;color:#FFF;">{$lang.status}</a></td>
       </tr>
 
 
@@ -63,7 +63,28 @@
     {/if}
     </table>
     
-    <br /><br />
+    <br />
+    
+    <!-- PAGING -->
+    <div align="center">
+        <div style="width:90%;height:50px;text-align:center;">
+        {if $total_pages gt 1}
+        Page: 
+            {section name=foo start=1 loop=$total_pages}
+                {if $page eq $smarty.section.foo.index}
+                    {$smarty.section.foo.index}
+                {else}
+                    <a href="clients.php?p={$smarty.section.foo.index}" style="text-decoration:none;font-weight:bold;">{$smarty.section.foo.index}</a> 
+                {/if}
+            {/section}
+        <br /><br />
+        {/if}        
+        <span style="font-size:9pt;">Total {$lang.main_clients}: {$total_rows}</span>
+        </div>
+    </div>
+    <!-- /PAGING -->
+    
+    <br />
     
     <table border="0" cellpadding="10" cellspacing="5" align="center" width="500" style="width:500px;table-layout:fixed;word-wrap:break-word;text-align:center">
       <tr align="center">
