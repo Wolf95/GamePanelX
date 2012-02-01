@@ -40,14 +40,57 @@ require('../include/config.php');
 // Page Title
 $smarty->assign('pagetitle', 'Network');
 
+########################################################################
+
+//
+// Sort By from URL
+//
+if(isset($_GET['order']))
+{
+    $get_order    = $_GET['order'];
+    $allowed_ord  = array('id','os','description','ip','datacenter','location');
+    
+    if(!in_array($get_order, $allowed_ord)) die('Invalid order by!');
+
+    $order_by = 'network.' . $get_order;
+    
+    if(isset($_GET['sort']))
+    {
+        $sort_by  = strtoupper($_GET['sort']);
+        if($sort_by == 'ASC' || $sort_by == 'DESC')
+          $order_by .= ' ' . $sort_by . ' ';
+    }
+    else $order_by .= ' ASC ';
+}
+// Default to ID
+else
+{
+    $order_by = 'network.id DESC';
+}
+
+// Assign order and sort
+$smarty->assign('s_order', $get_order);
+$smarty->assign('s_sort', strtolower($sort_by));
 
 ########################################################################
 
-// Check license variable
-if($gpxseckey_T2V1lmkWLli04Z7q3FT != 'F9hJt6up1h80qk9REDD2xyA89TfI185gwtLXJsSMhc61fWv5T33548rLqtW5MWGjkgFl8ISzsoF8491IT2V1lmkWLli04Z7q3FTls169B8PmTx0lRZet777Pr40p7R01FkQFymp1Z629GG5dEW8nI3')
+// Hardcoded for now
+$per_page = 30;
+
+//
+// Paging
+//
+if(isset($_GET['p']) && is_numeric($_GET['p']))
 {
-    die('Invalid license');
+    $start_page = $_GET['p'];
+    
+    // Subtract 1 so pages start at 1, now 0
+    if($start_page >= 1) $start_page--;
+    
+    $sql_limit  = $start_page * $per_page . ',' . $per_page;
 }
+// Default
+else $sql_limit = '0,' . $per_page;
 
 ########################################################################
 
@@ -56,7 +99,28 @@ $db = @mysql_connect($config['sql_host'],$config['sql_user'],$config['sql_pass']
 @mysql_select_db($config['sql_db']) or die('<center><b>Error:</b> <i>network.php</i>: Failed to select the database!</center>');
 
 // Show all user accounts
-$result = @mysql_query("SELECT id,DATE_FORMAT(date_added, '%c/%e/%Y %H:%i') AS date_added,ip,available,os,description,location,datacenter,linux_flavor FROM network WHERE physical='Y'") or die('<center><b>Error:</b> <i>network.php:</i> Failed to list user accounts!</center>');
+$result = @mysql_query("SELECT 
+                          id,
+                          DATE_FORMAT(date_added, '%c/%e/%Y %H:%i') AS date_added,
+                          ip,
+                          available,
+                          os,
+                          description,
+                          location,
+                          datacenter,
+                          linux_flavor 
+                        FROM network 
+                        WHERE 
+                          physical='Y' 
+                        ORDER BY 
+                          $order_by 
+                        LIMIT 
+                          $sql_limit") or die('<center><b>Error:</b> <i>network.php:</i> Failed to list user accounts!</center>');
+
+// Total Servers
+$result_found = @mysql_query('SELECT FOUND_ROWS()');
+$row_found    = mysql_fetch_row($result_found);
+$total_found  = $row_found[0];
 
 while ($line = mysql_fetch_assoc($result))
 {
@@ -66,6 +130,13 @@ while ($line = mysql_fetch_assoc($result))
 // Smarty mysql loop
 $smarty->assign('network', $value);
 
+// Total pages
+$total_pages  = round($total_found / $per_page);
+$start_page   = $start_page + 1;
+
+$smarty->assign('page', $start_page);
+$smarty->assign('total_rows', $total_found);
+$smarty->assign('total_pages', $total_pages);
 
 ########################################################################
 
