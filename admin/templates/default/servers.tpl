@@ -123,7 +123,7 @@
             {/section}
         <br /><br />
         {/if}        
-        <span style="font-size:9pt;">Total Servers: {$total_rows}</span>
+        <span style="font-size:9pt;">Total {$lang.servers}: {$total_rows}</span>
         </div>
     </div>
     <!-- /PAGING -->
