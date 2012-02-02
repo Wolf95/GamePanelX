@@ -186,11 +186,11 @@ if($srv_crea_sts == 'running')
 </tr>
 
 <tr height="30">
-  <td width="170"><b>Datacenter:</b></td>
+  <td><b>Datacenter:</b></td>
   <td><?php echo $srv_datacenter; ?></td>
 </tr>
 <tr height="30">
-  <td width="170"><b>Location:</b></td>
+  <td><b>Location:</b></td>
   <td><?php echo $srv_location; ?></td>
 </tr>
 
