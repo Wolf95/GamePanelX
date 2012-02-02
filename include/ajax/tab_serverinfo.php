@@ -75,7 +75,9 @@ $server_query = "SELECT
                     cfg.long_name,
                     cfg.is_steam,
                     domains.domain,
-                    network.ip 
+                    network.ip,
+                    network.datacenter,
+                    network.location 
                  FROM servers 
                  LEFT JOIN clients ON 
                     servers.userid = clients.id 
@@ -108,6 +110,8 @@ while($row = mysql_fetch_array($result))
     $srv_long_name  = $row['long_name'];
     $srv_is_steam   = $row['is_steam'];
     $srv_domain     = $row['domain'];
+    $srv_datacenter = $row['datacenter'];
+    $srv_location   = $row['location'];
 }
 
 ########################################################################
@@ -179,6 +183,15 @@ if($srv_crea_sts == 'running')
 <tr height="30">
   <td width="170"><b>Connection Info:</b></td>
   <td><?php echo $srv_ip . ':' . $srv_port; ?></td>
+</tr>
+
+<tr height="30">
+  <td width="170"><b>Datacenter:</b></td>
+  <td><?php echo $srv_datacenter; ?></td>
+</tr>
+<tr height="30">
+  <td width="170"><b>Location:</b></td>
+  <td><?php echo $srv_location; ?></td>
 </tr>
 
 <tr height="30">
