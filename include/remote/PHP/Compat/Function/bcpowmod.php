@@ -1,5 +1,5 @@
 <?php
-// $Id: bcpowmod.php,v 1.1 2007/07/02 04:19:55 terrafrost Exp $
+// $Id: bcpowmod.php,v 1.1 2007-07-02 04:19:55 terrafrost Exp $
 
 
 /**
@@ -64,4 +64,3 @@ if (!function_exists('bcpowmod')) {
         return php_compat_bcpowmod($x, $y, $modulus, $scale);
     }
 }
-?>
