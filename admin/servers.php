@@ -132,8 +132,6 @@ $per_page = 30;
 //
 if(isset($_GET['p']) && is_numeric($_GET['p']))
 {
-    
-    
     $start_page = $_GET['p'];
     
     // Subtract 1 so pages start at 1, now 0
@@ -177,6 +175,7 @@ $query_servers = "SELECT
 
 $result = @mysql_query($query_servers) or die('<center><b>Error:</b> <i>servers.php:</i> Failed to list servers!</center>');
 
+// Total Servers
 $result_found = @mysql_query('SELECT FOUND_ROWS()');
 $row_found    = mysql_fetch_row($result_found);
 $total_found  = $row_found[0];
