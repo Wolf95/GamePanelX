@@ -104,7 +104,7 @@ class Clients
         }
         else
         {
-            die('EMPTY SRV ID');
+            return 'ERROR: GamePanelX Pro API: No external billing product ID provided.';
         }
     }
     

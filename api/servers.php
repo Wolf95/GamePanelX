@@ -145,7 +145,7 @@ class Servers
         // Failure
         else
         {
-            return 'ERROR: GamePanelX Pro API: Failed to create the server';
+            return 'ERROR: GamePanelX Pro API: Failed to create the server (' . $created_serverid . ')';
         }
     }
     
