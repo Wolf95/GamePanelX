@@ -268,81 +268,12 @@ function gpx_create_server($type,$server,$userid,$status,$description,$ip,$port,
     
     if(!in_array($safe_type, $allowed_types))
     {
-        return 'FAILURE: Invalid type given';
-    }
-    
-    ####################################################################
-    
-    // Insert into `servers` table
-    $create_query = "INSERT INTO servers (userid,port,max_slots,date_created,type,status,show_cmd_line,server,ip,log_file,description,map,executable,cmd_line,working_dir,setup_dir,config_file,notes) VALUES('$safe_userid','$safe_port','$safe_max_slots',NOW(),'$safe_type','$safe_status','$safe_show_cmd_line','$safe_server','$safe_ip','$safe_log_file','$safe_desc','$safe_map','$safe_exe','$safe_cmd_line','$safe_working_dir','$safe_setup_dir','$safe_config_file','$safe_notes')";
-
-    // Run the query
-    if(!mysql_query($create_query))
-    {
-        return 'FAILURE: Failed to add the server to the database';
-    }
-
-    // Get the server ID of the server we just created
-    if(!$result_serverid = @mysql_query("SELECT id FROM servers WHERE ip='$safe_ip' AND port='$safe_port' ORDER BY id DESC LIMIT 0,1"))
-    {
-        return 'FAILURE: Failed to get server info';
-    }
-    
-    while($row_serverid = mysql_fetch_array($result_serverid))
-    {
-        $this_serverid = $row_serverid['id'];
-    }
-
-
-    // Begin insert config query
-    $insert_config = "INSERT INTO servers_options VALUES('','$this_serverid',";
-    
-    // Loop through all 10 config options, insert into `servers_options` table
-    for($i = 1; $i <= 10; $i++)
-    {
-        // Names
-        $this_name  = 'opt' . $i . '_name';
-        $this_edit  = 'opt' . $i . '_edit';
-        $this_value = 'opt' . $i . '_value';
+        #return 'FAILURE: Invalid type given';
         
-        // Values
-        $res_name   = $config_array[$this_name];
-        $res_edit   = $config_array[$this_edit];
-        $res_value  = $config_array[$this_value];
-        
-        // Fix the 'edit'
-        if($res_edit == 'on')
-        {
-            $nice_edit = 'Y';
-        }
-        else
-        {
-            $nice_edit = '';
-        }
-        
-        // Add to the query
-        if($i == 10)
-        {
-            $insert_config .= "'$res_name','$nice_edit','$res_value')";
-        }
-        else
-        {
-            $insert_config .= "'$res_name','$nice_edit','$res_value',";
-        }
+        // Default to game
+        $safe_type  = 'game';
     }
     
-    // Insert into `server_options` table
-    if(!@mysql_query($insert_config))
-    {
-        return 'FAILURE: Failed to add the server to the database(2)';
-    }
-
-    ####################################################################
-    
-    //
-    // Create on Remote Server
-    //
-
     // Probably coming from the API
     if(!defined('GPX_DOCROOT'))
     {
@@ -373,35 +304,277 @@ function gpx_create_server($type,$server,$userid,$status,$description,$ip,$port,
 
     ####################################################################
     
-    // Failure
-    if(!gpx_remote_create_server($this_serverid,$start_server))
-    {
-        return 'FAILURE: Failed to create on the Remote Server';
-    }
-    // Success
-    else
-    {
-        //
-        // Send notification
-        //
-        
-        // Probably coming from the API
-        if(!defined('GPX_DOCROOT'))
-        {
-            require_once('../include/functions/notifications.php');
-        }
-        // Normal pages
-        else
-        {
-            require_once(GPX_DOCROOT . '/include/functions/notifications.php');
-        }
-        
-        // Add new server notification
-        gpx_notify_add(2,$this_serverid);
+    // Get server defaults
+    $result_df  = @mysql_query("SELECT id,port,type,short_name,log_file,map,executable,working_dir,setup_dir FROM cfg WHERE short_name = '$safe_server'");
 
-        // Finish, return the server id that was created.
+    while($row_df = mysql_fetch_array($result_df))
+    {
+        $cfg_id       = $row_df['id'];
+        $def_port     = $row_df['port'];
+        $def_type     = $row_df['type'];
+        $def_short_nm = $row_df['short_name'];
+        $def_log_file = $row_df['log_file'];
+        $def_exe      = $row_df['executable'];
+        $def_work_dir = $row_df['working_dir'];
+        $def_set_dir  = $row_df['setup_dir'];
+        $def_map      = $row_df['map'];
+    }
+    
+    
+    
+    // Get cfgid's for each of the 4 simple id's
+    $result_spid  = @mysql_query("SELECT id,simpleid FROM cfg_items WHERE srvid = '$cfg_id' AND simpleid IN (1,2,3,4) ORDER BY simpleid ASC");
+
+    while($row_spid = mysql_fetch_array($result_spid))
+    {
+        $this_cfgid = $row_spid['id'];
+        $this_smpid = $row_spid['simpleid'];
+        
+        // IP Address
+        if($this_smpid == 1)
+        {
+            $cfgid_ip = $this_cfgid;
+        }
+        // Port
+        elseif($this_smpid == 2)
+        {
+            $cfgid_port = $this_cfgid;
+        }
+        // Max Slots
+        elseif($this_smpid == 3)
+        {
+            $cfgid_maxslots = $this_cfgid;
+        }
+        // Map
+        elseif($this_smpid == 4)
+        {
+            $cfgid_map  = $this_cfgid;
+        }
+    }
+
+    ########################################################################
+    
+    // Get network ID for this IP
+    $result_net = @mysql_query("SELECT id FROM network WHERE ip = '$ip'");
+    $row_net    = mysql_fetch_row($result_net);
+    $network_id = $row_net[0];
+    
+    ########################################################################
+    
+    // Array for config inserts
+    #$config_arr = array();
+    
+    
+    
+    /*
+    // Run through cfg_x items
+    foreach($_GET as $cfg => $cfg_val)
+    {
+        // Simple ID's
+        if(preg_match("/^smptxt_\d+$/", $cfg))
+        {
+            // Remove "cfg_", to get a valid ItemID
+            $cfg  = str_replace('smptxt_', '', $cfg);
+            
+            // Port
+            if($cfg == '2')
+            {
+                $server_port = $cfg_val;
+                
+                // Add to insert array (There is no value in `servers_cfg` for these, use respective `servers` values for SimpleID's
+                #$config_arr[] = "INSERT INTO servers_cfg (srvid,itemid) VALUES('%SRVID%','$cfgid_port')";
+                $insert_cfg .= "('%SRVID%','$cfgid_port',''),";
+            }
+            // Max Slots
+            elseif($cfg == '3')
+            {
+                $server_max_slots = $cfg_val;
+                
+                // Add to insert array
+                #$config_arr[] = "INSERT INTO servers_cfg (srvid,itemid) VALUES('%SRVID%','$cfgid_maxslots')";
+                $insert_cfg .= "('%SRVID%','$cfgid_maxslots',''),";
+            }
+            // Map
+            elseif($cfg == '4')
+            {
+                $server_map = $cfg_val;
+                
+                // Add to insert array
+                #$config_arr[] = "INSERT INTO servers_cfg (srvid,itemid) VALUES('%SRVID%','$cfgid_map')";
+                $insert_cfg .= "('%SRVID%','$cfgid_map',''),";
+            }
+        }
+        
+        
+        // Generic cfg_x items only
+        elseif(preg_match("/^cfg_\d+$/", $cfg))
+        {
+            // Remove "cfg_", to get a valid ItemID
+            $cfg  = str_replace('cfg_', '', $cfg);
+            
+            // Only if there's both an ID and a value
+            if(!empty($cfg) && !empty($cfg_val))
+            {
+                // Add to insert array; later, foreach through it and mysql_query it
+                #$config_arr[] = "INSERT INTO servers_cfg (srvid,itemid,item_value) VALUES('%SRVID%','$cfg','$cfg_val')";
+                $insert_cfg .= "('%SRVID%','$cfg','$cfg_val'),";
+            }
+        }
+    }
+    
+    // Add IP into the mix
+    #$config_arr[] = "INSERT INTO servers_cfg (srvid,itemid) VALUES('%SRVID%','$cfgid_ip')";
+    $insert_cfg .= "('%SRVID%','$cfgid_ip',''),";
+    */
+    
+    ########################################################################
+    
+    // Make sure IP:Port combo isn't in use
+    $result_used1 = @mysql_query("SELECT id FROM servers WHERE networkid = '$network_id' AND port = '$port' LIMIT 1");
+    $row_used1    = mysql_fetch_row($result_used1);
+    $port_used1   = $row_used1[0];
+    
+    if(!empty($port_used1)) die('That IP/Port combination is already in use!');
+    
+    // Setup variables
+    $server_port      = $port;
+    $server_max_slots = $max_slots;
+    
+    if(!empty($map)) 
+        $server_map  = $map;
+    else 
+        $server_map  = $def_map;
+    
+    // Check required
+    if($def_type == 'game' && empty($server_map)) die('The Map field was empty.  Please double-check and try again (server: ' . $def_short_nm . ', map: ' . $server_map . ', def map: ' . $def_map . ')');
+    
+    // Insert server
+    @mysql_query("INSERT INTO servers 
+                    (userid,networkid,port,max_slots,date_created,type,server,description,map,log_file,executable,working_dir,setup_dir) 
+                  VALUES('$safe_userid','$network_id','$server_port','$server_max_slots',NOW(),'$def_type','$def_short_nm','$safe_desc','$server_map','$def_log_file','$def_exe','$def_work_dir','$def_set_dir')") or die('Failed to insert the server!');
+    
+    $this_serverid  = mysql_insert_id();
+
+    if(empty($this_serverid)) die('Didnt find a server ID!  Bailing out!');
+
+    ########################################################################
+    
+    //
+    // Server cfg items
+    //
+    
+    // Setup string for multi-insert
+    $insert_cfg = 'INSERT INTO servers_cfg (srvid,itemid,item_value) VALUES ';
+    
+    // Insert the 4 important types (ip/port/maxslots/map)
+    $insert_cfg .= "('$this_serverid','$cfgid_ip',''),";        // IP
+    $insert_cfg .= "('$this_serverid','$cfgid_port',''),";      // Port
+    $insert_cfg .= "('$this_serverid','$cfgid_maxslots',''),";  // Max Slots
+    $insert_cfg .= "('$this_serverid','$cfgid_map',''),";       // Map
+    
+    // Also add all other generic items (not simple id's)
+    $result_spid  = @mysql_query("SELECT id,default_value FROM cfg_items WHERE srvid = '$cfg_id' AND simpleid = '0' AND deleted = '0' ORDER BY id ASC");
+
+    while($row_spid = mysql_fetch_array($result_spid))
+    {
+        $this_itemid  = $row_spid['id'];
+        $this_val     = $row_spid['default_value'];
+        
+        // Generic Item
+        $insert_cfg .= "('$this_serverid','$this_itemid','$this_val'),";
+    }
+    
+    // Lose the ending comma
+    $insert_cfg = substr($insert_cfg, 0, -1);
+    
+    // Run a multi-insert for server cfg items
+    @mysql_query($insert_cfg) or die('Failed to insert the config items: '.mysql_error());
+    
+    /*
+    // Insert each config value as a new row
+    foreach($config_arr as $query)
+    {
+        $query  = str_replace('%SRVID%', $this_serverid, $query);
+        
+        // Run the insert query
+        @mysql_query($query) or die('Failed to insert the config item: '.mysql_error());
+    }
+    
+    // Replace server ID var
+    $insert_cfg = str_replace('%SRVID%', $this_serverid, $insert_cfg);
+    */
+    
+    ########################################################################
+    
+    // Begin CMD Line
+    $cmd_line = './' . $def_exe;
+
+    // Get this all server's current config items
+    $server_query = "SELECT 
+                        servers_cfg.item_value,
+                        cfg_items.simpleid,
+                        cfg_items.name 
+                     FROM servers_cfg 
+                     LEFT JOIN cfg_items ON 
+                        servers_cfg.itemid = cfg_items.id 
+                     WHERE 
+                        servers_cfg.srvid = '$this_serverid' 
+                        AND servers_cfg.deleted = '0' 
+                     ORDER BY 
+                        cfg_items.simpleid ASC,
+                        servers_cfg.item_order ASC";
+
+    $result_srv = @mysql_query($server_query) or die('Failed to get current adv config items');
+
+    while($row_srv  = mysql_fetch_array($result_srv))
+    {
+        $cfg_name     = $row_srv['name'];
+        $cfg_simpleid = $row_srv['simpleid'];
+        $cfg_val      = $row_srv['item_value'];
+        
+        // IP Address
+        if($cfg_simpleid == 1)
+        {
+            $cfg_val  = $ip;
+        }
+        // Port
+        elseif($cfg_simpleid == 2)
+        {
+            $cfg_val  = $server_port;
+        }
+        // Max Slots
+        elseif($cfg_simpleid == 3)
+        {
+            $cfg_val  = $server_max_slots;
+        }
+        // Map
+        elseif($cfg_simpleid == 4)
+        {
+            $cfg_val  = $server_map;
+        }
+        
+        
+        // Add to command-line
+        if(!empty($cfg_name) && !empty($cfg_val))
+        {
+            $cmd_line .= ' ' . $cfg_name . ' ' . $cfg_val;
+        }
+    }
+
+    // Save new cmd line
+    @mysql_query("UPDATE servers SET cmd_line = '$cmd_line' WHERE id = '$this_serverid'");
+
+    ########################################################################
+
+    // Create server
+    $result_create  = gpx_remote_create_server($this_serverid,false);
+
+    // Return result
+    if($result_create == 'success')
+    {
         return $this_serverid;
     }
+    else return 'ERROR: ' . $result_create;
 }
 
 
@@ -658,12 +831,16 @@ function gpx_avail_ip_port($server)
             $this_networkid = $srv_networkid;
             break;
         }
+        else
+        {
+            die("ERROR: Server load average ($srv_loadavg) is higher than the allowed limit ($config_load_limit).");
+        }
     }
     
     // No available servers
     if(empty($this_networkid))
     {
-        die('ERROR: No available servers');
+        die('ERROR: No available network server info.  Has the cron job been run (include/cron.php)?');
     }
 
     ####################################################################
@@ -680,27 +857,26 @@ function gpx_avail_ip_port($server)
     ####################################################################
     
     // Loop through the IP's using this network server
-    $result_ips = @mysql_query("SELECT ip FROM network WHERE id = '$this_networkid' OR parentid = '$this_networkid' AND available = 'Y'");
+    $result_ips = @mysql_query("SELECT id,ip FROM network WHERE id = '$this_networkid' OR parentid = '$this_networkid' AND available = 'Y'");
 
     while($row_ips  = mysql_fetch_array($result_ips))
     {
         // Current IP Address in the loop
-        $this_ip  = $row_ips['ip'];
+        $this_netid = $row_ips['id'];
+        $this_ip    = $row_ips['ip'];
+        
+        // Check if this IP is available with default port
+        $result_avl = @mysql_query("SELECT id FROM servers WHERE networkid = '$this_netid' AND port= '$default_port'");
+        $row_avl    = mysql_fetch_row($result_avl);
+        $srv_cnt    = $row_avl[0];
         
         //
         // Default Ports ONLY
         // Check for this IP / Default Port availability
         if($config_default_port_only == 'Y')
         {
-            // Check if this IP is available with default port
-            $result_avl = @mysql_query("SELECT COUNT(id) AS thecount FROM servers WHERE ip = '$this_ip' AND port= '$default_port'");
-            while($row_avl  = mysql_fetch_array($result_avl))
-            {
-                $srv_cnt = $row_avl['thecount'];
-            }
-            
             // Check default availability
-            if($srv_cnt == 0)
+            if(empty($srv_cnt))
             {
                 $available_ip   = $this_ip;
                 $available_port = $default_port;
@@ -708,19 +884,12 @@ function gpx_avail_ip_port($server)
             }
         }
         //
-        // Allow NON-DEFAULT Ports to be used
+        // Allow Non-Default Ports to be used
         //
         else
         {
-            // First, check if this IP is available with default port
-            $result_avl = @mysql_query("SELECT COUNT(id) AS thecount FROM servers WHERE ip = '$this_ip' AND port= '$default_port'");
-            while($row_avl  = mysql_fetch_array($result_avl))
-            {
-                $srv_cnt = $row_avl['thecount'];
-            }
-            
             // Check default availability
-            if($srv_cnt == 0)
+            if(empty($srv_cnt))
             {
                 $available_ip   = $this_ip;
                 $available_port = $default_port;
@@ -761,7 +930,7 @@ function gpx_avail_ip_port($server)
             ############################################################
             
             // Check for servers using these ports with this IP
-            $result_using = @mysql_query("SELECT port FROM servers WHERE ip = '$this_ip' AND port IN ($ports_list)");
+            $result_using = @mysql_query("SELECT port FROM servers WHERE networkid = '$this_networkid' AND port IN ($ports_list)");
             $count_ports  = mysql_num_rows($result_using);
             $arr_used = array();
             

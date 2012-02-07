@@ -102,6 +102,24 @@ function gpx_remote_file_list($server_id,$server_dir)
     ####################################################################
     
     // User's game directory
+    $game_dir = "accounts/$server_username/$server_type/$server_ip:$server_port/";
+    
+    if(!empty($server_dir))
+    {
+        $list_dir = $game_dir . $server_dir;
+    }
+    else
+    {
+        $list_dir = $game_dir;
+    }
+    
+    // Get directory contents via SFTP
+    $file_list  = gpx_sftp($conn_ip,$conn_port,$conn_user,$conn_pass,$list_dir);
+    
+    return $file_list;
+    
+    /*
+    // User's game directory
     $game_dir = '$HOME' . "/accounts/$server_username/$server_type/$server_ip\:$server_port/";
     
     if(!empty($server_dir))
@@ -127,6 +145,7 @@ function gpx_remote_file_list($server_id,$server_dir)
     {
         return $file_list;
     }
+    */
 }
 
 

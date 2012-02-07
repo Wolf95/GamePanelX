@@ -80,6 +80,7 @@ function gpx_ssh_exec($ssh_ip,$ssh_port,$ssh_user,$ssh_pass,$ssh_cmd,$ssh_output
     require_once(GPX_DOCROOT . '/include/remote/Net/SSH2.php');
 
 
+    /*
     // Check that the host/port is up and working
     $test_host = fsockopen($ssh_ip,$ssh_port,$errno,$errstr,$conn_timeout);
     if(!$test_host)
@@ -87,14 +88,23 @@ function gpx_ssh_exec($ssh_ip,$ssh_port,$ssh_user,$ssh_pass,$ssh_cmd,$ssh_output
         //return 'FAILURE: <i>ssh.php:</i> Unable to connect to the Remote IP Address and Port.  The host may be down, the SSHd service not running, or the port is closed.  Check your configuration and try again.</center>';
         return 'Unable to connect to the Remote IP Address and Port';
     }
-
+    */
 
     // Connect to the server
     $ssh = new Net_SSH2($ssh_ip, $ssh_port, $conn_timeout);
+    
+    // Login
     if (!$ssh->login($ssh_user, $ssh_pass))
     {
-        //return 'FAILURE: Login to the Remote Server failed';
-        return 'FAILURE: Login to the Remote Server failed';
+        // Not working.  Test connectivity
+        if(!fsockopen($ssh_ip,$ssh_port,$errno,$errstr,$conn_timeout))
+        {
+            return 'Unable to connect to the Remote IP Address and Port.  Check your connection settings and try again.';
+        }
+        else
+        {
+            return 'FAILURE: Login to the Remote Server failed';
+        }
     }
     
     
@@ -108,79 +118,63 @@ function gpx_ssh_exec($ssh_ip,$ssh_port,$ssh_user,$ssh_pass,$ssh_cmd,$ssh_output
         $ssh->exec($ssh_cmd);
         return true;
     }
-
-    
-    ####################################################################
-    
-    /*
-    
-    //
-    // PECL SSH2 Module
-    //
-    
-    
-    // Make sure the ssh2 function exists
-    if (!function_exists('ssh2_connect'))
-    {
-        die('<center><b>Error:</b> <i>ssh.php:</i> The SSH2 Module doesn\'t exist!  Check the module installation and try again.</center>');
-    }
-    
-    
-    ####################################################################
-    
-    
-    // Check that the host/port is up and working
-    $test_host = fsockopen($ssh_ip,$ssh_port,$errno,$errstr,$conn_timeout);
-    if(!$test_host)
-    {
-        die('<center><b>Error:</b> <i>ssh.php:</i> Unable to connect to the SSH IP Address and Port.  The host may be down, the SSHd service not running, or the port is closed.  Check your configuration and try again.</center>');
-    }
-    
-    
-    ####################################################################
-
-
-    // Connect to the server
-    $ssh2 = ssh2_connect($ssh_ip,$ssh_port);
-    
-    // Set connection timeout
-    stream_set_timeout($ssh2, $conn_timeout);
-    
-    // Authenticate
-    ssh2_auth_password($ssh2, $ssh_user, $ssh_pass);
-    
-    // Execute command
-    if(!$stream = ssh2_exec($ssh2, $ssh_cmd))
-    {
-        return false;
-    }
-    // Success.  Check if we want output from the command
-    else
-    {
-        // Check if the functions wants output back
-        if($ssh_output)
-        {
-            stream_set_blocking($stream, true);
-            $data = '';
-            
-            while($buf = fread($stream,4096))
-            {
-                $data .= $buf;
-            }
-
-            // Close the stream
-            fclose($stream);
-            
-            return $data;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    */
 }
 
 
+function gpx_sftp($ssh_ip,$ssh_port,$ssh_user,$ssh_pass,$directory)
+{
+    // Server Connection Timeout
+    $conn_timeout = 6;
+    
+    // Set script timeout
+    set_time_limit($conn_timeout);
+    
+    ####################################################################
+    
+    // Check empty
+    if(empty($ssh_ip))
+    {
+        $err  = 'Connection Address';
+    }
+    elseif(empty($ssh_port))
+    {
+        $err  = 'Connection Port';
+    }
+    elseif(empty($ssh_user))
+    {
+        $err  = 'Connection Username';
+    }
+    elseif(empty($ssh_pass))
+    {
+        $err  = 'Connection Password';
+    }
+    
+    // Default to current dir (probably $HOME)
+    if(empty($directory)) $directory = '$HOME';
+    
+    // Check security
+    elseif(preg_match("/\.\.\//", $directory)) return 'FAILURE: <i>ssh.php:</i> Invalid directory specified.';
+    
+    // Failure
+    if(!empty($err))
+    {
+        return 'FAILURE: <i>ssh.php:</i> Important Remote Server values were left out: <b>' . $err . '</b>';
+    }
+    
+    ####################################################################
 
-
+    // Setup SFTP support
+    require(GPX_DOCROOT.'/include/remote/Net/SFTP.php');
+    
+    // Setup Connection
+    $sftp = new Net_SFTP($ssh_ip,$ssh_port,$conn_timeout);
+    
+    // Test login
+    if(!$sftp->login($ssh_user, $ssh_pass)) return 'FAILURE: <i>ssh.php:</i> Failed to login to the SFTP server!';
+    
+    // List files
+    #$file_list  = $sftp->nlist($directory);
+    $file_list  = $sftp->rawlist($directory);
+    
+    return $file_list;
+}
