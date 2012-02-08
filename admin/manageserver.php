@@ -357,12 +357,13 @@ $smarty->assign('lang', $lang);
 ########################################################################
 
 // First Page
-if(!isset($_POST['status']))
-{
+#if(!isset($_POST['status']))
+#{
     // Display HTML Page
     $smarty->display($config['Template'] . '/manageserver.tpl');
-}
+#}
 
+/*
 // Action page
 elseif(isset($_POST['status']))
 {
@@ -379,3 +380,4 @@ elseif(isset($_POST['status']))
         exit;
     }
 }
+*/
