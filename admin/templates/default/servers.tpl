@@ -2,8 +2,10 @@
 
     {include file="$template/header.tpl"}
     {include file="$template/navigation.tpl"}
-        
-    <center>
+    
+    <br /><br />
+    
+    <div align="center">
     <b>
       {if $type == 'game'}
           <img style="padding-bottom:8px" src="templates/{$template}/img/icons/game-64px.png" name="icon_image" width="64" height="64" border="0"><br />
@@ -17,7 +19,7 @@
           {$lang.clsrv_displ_all_srv}
       {/if}
     </b>
-    </center>
+    </div>
     
     
     <br /><br />
@@ -128,8 +130,6 @@
     </div>
     <!-- /PAGING -->
     
-    
-    <br />
     
     <table border="0" cellpadding="10" cellspacing="5" align="center" width="500" style="width:500px;table-layout:fixed;word-wrap:break-word;text-align:center">
       <tr align="center">
