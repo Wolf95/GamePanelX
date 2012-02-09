@@ -146,7 +146,7 @@
         if(!is_writable('../include/db.php'))
         {
             $failed=1;
-            echo '<span style="font-weight:bold;color:red">Error:</span> The "include/db.php" file must exist and be writable by the webserver.  You should run <b>chmod 777 include/db.php</b> from the root GamePanelX Pro directory.';
+            echo '<span style="font-weight:bold;color:red">Error:</span> The "include/db.php" file must exist and be writable by the webserver.  Rename "include/db.php.new" to "include/db.php" and try again.  Otherwise, run <b>chmod 777 include/db.php</b>.';
         }
         else
         {

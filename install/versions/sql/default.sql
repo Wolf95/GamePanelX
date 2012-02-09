@@ -476,7 +476,11 @@ INSERT INTO `cfg_items` (`id`, `srvid`, `deleted`, `required`, `client_edit`, `u
 (106, 20, 0, 0, 0, 1, 0, 1, 0, 'voice_ip', '', ''),
 (107, 20, 0, 0, 0, 1, 2, 1, 0, 'default_voice_port', '9987', ''),
 (108, 20, 0, 0, 0, 1, 4, 1, 0, 'map', 'default', ''),
-(109, 20, 0, 0, 0, 1, 3, 1, 0, 'virtualserver_maxclients', '12', '');
+(109, 20, 0, 0, 0, 1, 3, 1, 0, 'virtualserver_maxclients', '12', ''),
+(110, 21, 0, 0, 0, 1, 0, 1, 0, '-ip', '', ''),
+(111, 21, 0, 0, 0, 1, 2, 1, 0, '-port', '', ''),
+(112, 21, 0, 0, 0, 1, 4, 1, 0, '+map', '', ''),
+(113, 21, 0, 0, 0, 1, 3, 1, 0, '+maxplayers', '', '');
 
 
 INSERT INTO `cfg_configs` (`id`, `srvid`, `name`, `dir`, `description`, `rmcmd1`, `rmcmd2`, `rmcmd3`, `rmcmd4`, `rmcmd5`, `rmcmd6`, `rmcmd7`, `rmcmd8`, `rmcmd9`, `rmcmd10`) VALUES
@@ -505,7 +509,8 @@ INSERT INTO `cfg` (`id`, `max_slots`, `port`, `date_added`, `last_updated`, `typ
 (15, 32, 27015, '2010-09-22 15:31:45', '0000-00-00 00:00:00', 'game', 'Y', 'cmd', 'Y', 'N', '', '', './%executable% -game %mod_name% +map %map% +maxplayers %max_slots% -ip %ip% +port %port%', '', '', 'tf2', 'tf2', 'tf', 'Team Fortress 2', 'tf', 'TF2', 'FPS', '', '27015', '27015,1200', '27015', 'srcds_run', 'cp_dustbowl', '', 'orangebox', '', 'server.cfg', '', '', 'ip', 'port', 'maxplayers', 'map', 'sv_password', 'sv_lan'),
 (16, 32, 27015, '2010-09-23 21:52:16', '0000-00-00 00:00:00', 'game', 'Y', 'cmd', 'N', 'N', '', 'The original Day of Defeat', './%executable% -game %mod_name% +ip %ip% +port %port% +maxplayers %max_slots% +map %default_map%', '', '', 'dod', 'dod', 'dod', 'Day of Defeat', 'dod', 'DOD', 'FPS', '', '27015', '27015', '27015', 'hlds_run', 'dod_avalanche', '', '', '', 'server.cfg', '', '', '+ip', '+port', '+maxplayers', '+map', '+sv_password', '+sv_lan'),
 (19, 12, 8767, '2011-10-19 08:37:07', '0000-00-00 00:00:00', 'voip', 'Y', 'cmd', 'N', 'N', '', '2nd edition of TeamSpeak', './%executable% start', '', '', 'ts2', 'ts2', '', 'Teamspeak 2', '', 'TS2', '', '', '8767,14534,51234', '14534,51234', '8767', 'teamspeak2-server_startscript', '', '', '', '', 'server.ini', '', '', '', '', '', '', '', ''),
-(20, 12, 9987, '2011-10-19 08:47:04', '0000-00-00 00:00:00', 'voip', 'Y', 'cmd', 'N', 'N', '', '3rd edition of TeamSpeak', './%executable%', '', '', 'ts3', 'ts3', '', 'Teamspeak 3', '', 'TS3', '', '', '9987,14534,51234', '14534,51234', '9987', 'ts3server_minimal_runscript.sh', '', '', '', '', 'server.ini', '', '', '', '', '', '', '', '');
+(20, 12, 9987, '2011-10-19 08:47:04', '0000-00-00 00:00:00', 'voip', 'Y', 'cmd', 'N', 'N', '', '3rd edition of TeamSpeak', './%executable%', '', '', 'ts3', 'ts3', '', 'Teamspeak 3', '', 'TS3', '', '', '9987,14534,51234', '14534,51234', '9987', 'ts3server_minimal_runscript.sh', '', '', '', '', 'server.ini', '', '', '', '', '', '', '', ''),
+(21, 64, 27015, '2012-01-19 18:58:04', '0000-00-00 00:00:00', 'game', 'Y', 'cmd', 'Y', 'N', '', 'Multiplayer Half-Life 2', './%executable% -game %mod_name% +map %map% +maxplayers %max_slots% -ip %ip% +port %port%', '', '', 'hl2_dm', 'halflife2', 'hl2mp', 'Half-Life 2: Deathmatch', 'hl2mp', 'HL2', 'FPS', '%working_dir%/', '27000,27020,27019', '1200,27000_27039', '1200,27000_27039', 'srcds_run', 'dm_lockdown', '', 'orangebox', '', 'server.cfg', '', '', '-ip', '-port', '+maxplayers', '+map', '+sv_password', '+sv_lan');
 
 
 

@@ -76,6 +76,26 @@ if($usr_version == '1.0.9' || $usr_version == '1.0.11')
     $new_id = mysql_insert_id();
     
     @mysql_query("INSERT INTO `cfg_items` (`srvid`, `deleted`, `required`, `client_edit`, `usr_def`, `simpleid`, `cmd_line`, `cfg_file`, `name`, `default_value`, `description`) VALUES($new_id, 0, 0, 0, 1, 0, 1, 0, '-ip', '', ''),($new_id, 0, 0, 0, 1, 2, 1, 0, '-port', '', ''),($new_id, 0, 0, 0, 1, 4, 1, 0, '+map', '', ''),($new_id, 0, 0, 0, 1, 3, 1, 0, '+maxplayers', '', '')") or die('Failed to add HL2:DM Support (2)');
+    
+    // Set new version
+    $usr_version  = '1.0.12';
+}
+
+// Update to 1.0.14
+if($usr_version == '1.0.12')
+{
+    // Remove 'admin/action.php' and 'admin/serverinfo.php' files; they are unused
+    if(file_exists('../admin/action.php'))
+    {
+        if(!unlink('../admin/action.php')) die('Failed to remove the "admin/action.php" file.  Please remove it manually and try again.');
+    }
+    if(file_exists('../admin/serverinfo.php'))
+    {
+        if(!unlink('../admin/serverinfo.php')) die('Failed to remove the "admin/serverinfo.php" file.  Please remove it manually and try again.');
+    }
+    
+    // Set new version
+    $usr_version  = '1.0.14';
 }
 
 ########################################################################

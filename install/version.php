@@ -17,6 +17,6 @@ along with GamePanelX.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Define the current GamePanelX version
-define('GPX_VERSION', '1.0.13');
+define('GPX_VERSION', '1.0.14');
 
 ?>

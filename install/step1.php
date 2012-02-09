@@ -227,7 +227,7 @@ $(document).ready(function() {
   </tr>
   
   <tr>
-    <td align="center" height="20" valign="middle" class="footer_text" colspan="6">&copy; GamePanelX Pro 2010-2011</td>
+    <td align="center" height="20" valign="middle" class="footer_text" colspan="6">&copy; GamePanelX Pro 2007-2012</td>
   </tr>
   
 </table>

@@ -28,7 +28,7 @@
 error_reporting(E_ERROR);
 
 // If they have a current install, send to update.php
-include('../include/db.php');
+if(file_exists('../include/db.php')) include('../include/db.php');
 
 if(isset($config['sql_host']) && isset($config['sql_user']))
 {
@@ -234,7 +234,7 @@ elseif(isset($_POST['step2']) && !isset($_POST['step1']) && !isset($_POST['check
     //
     // Create config file (db.php)
     //
-    $fh = fopen('../include/db.php', 'w') or die('Failed to open the include/db.php for writing.  Check that "include/db.php" in the GamePanelX document root is writable by the web server.');
+    $fh = fopen('../include/db.php', 'w') or die('Failed opening "include/db.php".  Rename "include/db.php.new" to "include/db.php" and try again.  Otherwise check for file write permissions.');
 
     // Add the config items
     fwrite($fh, '<?php' . "\n");
