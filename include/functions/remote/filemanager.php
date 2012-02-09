@@ -230,14 +230,19 @@ function gpx_remote_file_list_net($network_id,$server_dir)
     // Home dir listing
     if(!empty($server_dir))
     {
-        $list_dir = '$HOME/' . $server_dir;
+        $list_dir = './' . $server_dir;
     }
     else
     {
-        $list_dir = '$HOME/';
+        $list_dir = './';
     }
     
+    // Get directory contents via SFTP
+    $file_list  = gpx_sftp($conn_ip,$conn_port,$conn_user,$conn_pass,$list_dir);
     
+    return $file_list;
+    
+    /*
     // Get remote file list
     $ssh_cmd = 'ls -lpX ' . $list_dir . ' | awk \'{print $1,$5,$6,$7,$8,$9}\' | grep -v total ; echo success';
     
@@ -251,6 +256,7 @@ function gpx_remote_file_list_net($network_id,$server_dir)
     {
         return $file_list;
     }
+    */
 }
 
 

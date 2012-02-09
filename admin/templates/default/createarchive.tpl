@@ -6,8 +6,7 @@
 {include file="$template/navigation.tpl"}
 {include file="$template/bar.tpl"}
   
-  
-<br /><br />
+
 
 {literal}
 <style type="text/css">

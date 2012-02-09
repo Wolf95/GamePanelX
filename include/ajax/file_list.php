@@ -318,7 +318,6 @@ foreach($file_list as $single_file=>$item_attr)
         // Add icon name to array
         $arr_link[$key]['file_icon'] = $icon_name;
     }
-    else die('Empty filename');
     
     $key++;
 }

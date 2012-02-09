@@ -57,14 +57,7 @@ function gpx_file_list_net($network_id,$server_dir)
     // Get remote file list
     $file_list = gpx_remote_file_list_net($network_id,$server_dir);
     
-    if($file_list == 'success')
-    {
-        return false;
-    }
-    else
-    {
-        return $file_list;
-    }
+    return $file_list;
 }
 
 

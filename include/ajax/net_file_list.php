@@ -114,7 +114,7 @@ if(preg_match("/\.(txt|cfg|rc|log)$/i", $url_prevdir))
     $smarty->display(GPX_DOCROOT.'/admin/templates/' . $config['Template'] . '/fileedit.tpl');
     exit;
     */
-    die('Not implemented');
+    die('You cannot edit text files in this mode; please select a directory for Template Creation.');
 }
 
 ########################################################################
@@ -129,7 +129,7 @@ $file_list  = gpx_file_list_net($url_id,$url_prevdir); // Empty file/dir means d
 // Create array from list
 $array_list = explode("\n", $file_list);
 
-
+/*
 // If no files in this directory
 if($array_list[0] == "success")
 {
@@ -148,13 +148,6 @@ else
     // Get total count
     $count_arr = count($array_list) - 1;
     
-    /*
-    echo '<pre>';
-    var_dump($array_list);
-    echo '</pre>';
-    echo "ENDING: " . end($array_list);
-    */
-    
     if($array_list[$count_arr] == 'success')
     {
         // Remove 'success' from the end
@@ -162,46 +155,47 @@ else
         // $array_list[$count_arr] = str_replace('success', '', $array_list[$count_arr]);
     }
 }
-
+*/
 
 // Array for Smarty
 $arr_link = array();
+$key      = 0;
+
+// Format bytes to nicer numbers (taken from http://php.net/manual/de/function.filesize.php)
+function formatBytes($size)
+{
+    $precision = 2;
+    $base = log($size) / log(1024);
+    $suffixes = array('B', 'K', 'MB', 'GB', 'TB');   
+
+    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
+}
 
 // Loop through all files
-foreach($array_list as $key=>$single_file)
+foreach($file_list as $single_file=>$item_attr)
 {
     if(!empty($single_file))
     {
-        // Separate by space
-        $arr_items = explode(" ", $single_file);
-        
         // File info
-        $file_perms       = $arr_items[0];
-        $file_size_bytes  = $arr_items[1];
-        $file_date_month  = $arr_items[2];
-        $file_date_day    = $arr_items[3];
-        $file_name        = $arr_items[5];
+        $file_name        = $single_file;
+        $file_perms       = $item_attr['permissions'];
+        $file_size_bytes  = $item_attr['size'];
+        $file_last_mod    = $item_attr['mtime'];
+        $file_type        = $item_attr['type']; // 1 or 2.  1 = File, 2 = Directory
+        
+        // Skip "." or ".." files
+        if(preg_match("/^\./", $file_name)) continue;
+        
+        // Setup for sorting by dir first
+        $sorter[$key]     = $item_attr['type'];
+        
+        // Skip files!  We don't care about them for template creation
+        #if($file_type == 1) continue;
         
         ################################################################
-        
-        // File Time/Year
-        if(preg_match("/\:/", $arr_items[4]))
-        {
-            // This is current year, has a time
-            $file_time  = $arr_items[4];
-            $file_year  = date('Y');
-        }
-        // This is another year, no time
-        else
-        {
-            $file_time  = '';
-            $file_year  = $arr_items[4];
-        }
-        
-        ################################################################
-        
+                
         // Directories
-        if(substr($file_name, -1) == '/')
+        if($file_type == 2)
         {
             $a_href = 'filemanager.php';
         }
@@ -217,8 +211,8 @@ foreach($array_list as $key=>$single_file)
         
         // Add to array
         $arr_link[$key]['file_perms']         = $file_perms;
-        $arr_link[$key]['file_size']          = number_format($file_size_bytes/(1024*1024),1);
-        $arr_link[$key]['file_date']          = $file_date_month . ' ' . $file_date_day . ' ' . $file_year;
+        $arr_link[$key]['file_size']          = formatBytes($file_size_bytes);
+        $arr_link[$key]['file_date']          = date('m/d/Y', $file_last_mod);
         $arr_link[$key]['file_name']          = $file_name;
         $arr_link[$key]['file_enc_prev_dir']  = $encoded_prev_dir;
         $arr_link[$key]['file_enc_name']      = $encode_filename;
@@ -246,7 +240,7 @@ foreach($array_list as $key=>$single_file)
         ################################################################
         
         // Directory or File
-        if(substr($file_name, -1) == '/')
+        if($file_type == 2)
         {
             $arr_link[$key]['file_is_dir']    = 1;
         }
@@ -302,7 +296,12 @@ foreach($array_list as $key=>$single_file)
         // Add icon name to array
         $arr_link[$key]['file_icon'] = $icon_name;
     }
+    
+    $key++;
 }
+
+// Sort the listings, directories first
+array_multisort($sorter, SORT_DESC, $arr_link);
 
 ########################################################################
 
