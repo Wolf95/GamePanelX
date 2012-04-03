@@ -100,9 +100,18 @@ function gpx_remote_get_home($networkid)
     }
     
     
-    // Run the SSH Test and test files
-    $ssh_cmd = 'echo $HOME';
-    $result_test = gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
+    // Check that the host/port is up and working before trying to SSH
+    if(fsockopen($conn_ip,$conn_port,$errno,$errstr,8))
+    {
+        // Run the SSH Test and test files
+        $ssh_cmd = 'echo $HOME';
+        $result_test = @gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
+    }
+    else
+    {
+        return 'Unable to connect to the Remote IP Address and Port';
+    }
+    
 
     return $result_test;
 }

@@ -83,7 +83,7 @@ if(file_exists($language_file))
 }
 else
 {
-    die('<center><b>Error:</b> Failed to find the \'' . $user_lang . '\' language file!</center>');
+    die('<center><b>Error:</b> Failed to find the \'' . $user_lang . '\' language file!<br /><br />Was the Document Root set correctly (' . GPX_DOCROOT . ')?<br />Either reinstall or update the "DocRoot" value in the `configuration` database table.</center>');
 }
 
 // Assign language
