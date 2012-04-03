@@ -33,19 +33,18 @@ function gpx_remote_test($id)
         $conn_port  = $row_server['conn_port'];
     }
     
-    
-    // Run the SSH Test and test files
-    $ssh_cmd = '$HOME/scripts/CheckInstall';
-    $result_test = gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
-    //die('<center><b>Error:</b> <i>remote.php:</i> Test connection failed!</center>');
-
-    if(trim($result_test) == 'success')
+    // Check that the host/port is up and working before trying to SSH
+    if(fsockopen($conn_ip,$conn_port,$errno,$errstr,8))
     {
-        return 'success';
+        // Run the SSH Test and test files
+        $ssh_cmd = '$HOME/scripts/CheckInstall';
+        $result_test = @gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
+        
+        return $result_test;
     }
     else
     {
-        return trim($result_test);
+        return 'Unable to connect to the Remote Server';
     }
 }
 
@@ -177,15 +176,16 @@ function remote_gpx_remote_serverinfo($networkid)
     $separater      = '%gpx%';
     $ssh_cmd        = $remote_load_avg . " ; echo $separater ; " . $remote_cpu_total . " ; echo $separater ; " . $remote_cpu_type . " ; echo $separater ; " . $remote_meminfo . " ; echo $separater ; " . $remote_disk_usage;
 
-
-    // Run the commands (with server response)
-    if(!$result_info = gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true))
+    
+    // Check that the host/port is up and working before trying to SSH
+    if(fsockopen($conn_ip,$conn_port,$errno,$errstr,8))
     {
-        return false;
+        $result_info = @gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
+        return $result_info;
     }
     else
     {
-        return $result_info;
+        return '<font color=red>Unable to connect to the Remote Server!</font>';
     }
 }
 
