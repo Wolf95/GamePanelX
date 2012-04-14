@@ -40,15 +40,6 @@ require('../include/config.php');
 // Page Title
 $smarty->assign('pagetitle', 'Add Network Server');
 
-
-########################################################################
-
-// Check license variable
-if($gpxseckey_T2V1lmkWLli04Z7q3FT != 'F9hJt6up1h80qk9REDD2xyA89TfI185gwtLXJsSMhc61fWv5T33548rLqtW5MWGjkgFl8ISzsoF8491IT2V1lmkWLli04Z7q3FTls169B8PmTx0lRZet777Pr40p7R01FkQFymp1Z629GG5dEW8nI3')
-{
-    die('Invalid license');
-}
-
 ########################################################################
 
 // Parent ID from the URL
@@ -131,16 +122,27 @@ elseif(isset($_POST['create']))
     //
     // Insert data
     //
-    require_once("../include/functions/network.php");
+    require(GPX_DOCROOT.'/include/functions/network.php');
 
     //
     // Create Physical Server
     //
     if($is_physical == 'Y')
     {
-        if(!gpx_network_add_server($post_ip,$post_description,$post_available,$is_physical,$post_os,$post_location,$post_datacenter,$post_conn_user,$post_conn_pass,$post_conn_port))
+        $phys_netid = gpx_network_add_server($post_ip,$post_description,$post_available,$is_physical,$post_os,$post_location,$post_datacenter,$post_conn_user,$post_conn_pass,$post_conn_port);
+        
+        #if(!gpx_network_add_server($post_ip,$post_description,$post_available,$is_physical,$post_os,$post_location,$post_datacenter,$post_conn_user,$post_conn_pass,$post_conn_port))
+        
+        // Failure
+        if(empty($phys_netid) || !is_numeric($phys_netid))
         {
-            die('<center><b>Error:</b> Failed to create the server!</center>');
+            die('<div align="center"><b>Error:</b> Failed to create the server:<br /><br />' . $phys_netid . '<br /><br /><a href="network.php">Click here to go back</a></div>');
+        }
+        // Success
+        else
+        {
+            header("Location: editnetworkserver.php?id=$phys_netid&info=updated");
+            exit(0);
         }
     }
     
@@ -153,29 +155,24 @@ elseif(isset($_POST['create']))
         {
             die('<center><b>Error:</b> Failed to create the server!</center>');
         }
+        
+        header("Location: editnetworkserver.php?id=$url_id&info=updated");
+        exit;
     }
 
     
 
-
+    /*
     // NEW Physical Server; send to Edit
     if(empty($url_id) && $is_physical == 'Y')
     {
         // Get this ID
-        $this_id = gpx_network_get_id($post_ip);
+        #$this_id = gpx_network_get_id($post_ip);
         
         // Redirect to editnetworkserver.php
-        header("Location: editnetworkserver.php?id=$this_id&info=updated");
+        header("Location: editnetworkserver.php?id=$phys_netid&info=updated");
         exit;
     }
-    /*
-    elseif(empty($url_id) && $is_physical != 'Y')
-    {
-        // Redirect to network.php
-        header("Location: network.php?info=created");
-        exit;
-    }
-    */
     // IP Address; 
     else
     {
@@ -183,4 +180,5 @@ elseif(isset($_POST['create']))
         header("Location: editnetworkserver.php?id=$url_id&info=updated");
         exit;
     }
+    */
 }
