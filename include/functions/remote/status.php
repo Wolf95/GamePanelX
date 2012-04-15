@@ -19,6 +19,7 @@ function gpx_remote_server_restart($server_id,$unsuspend=false)
     $query_gameinfo = "SELECT 
                           servers.port,
                           servers.max_slots,
+                          servers.logging,
                           servers.type,
                           servers.server,
                           servers.log_file,
@@ -46,6 +47,7 @@ function gpx_remote_server_restart($server_id,$unsuspend=false)
         $server_ip        = $row_gameinfo['ip'];
         $server_port      = $row_gameinfo['port'];
         $server_max_slots = $row_gameinfo['max_slots'];
+        $server_logging   = $row_gameinfo['logging'];
         $server_type      = $row_gameinfo['type'];
         $server_name      = $row_gameinfo['server'];
         $server_log_file  = $row_gameinfo['log_file'];
@@ -137,14 +139,12 @@ function gpx_remote_server_restart($server_id,$unsuspend=false)
     ####################################################################
     
     // Optionally UN-suspend the server
-    if($unsuspend)
-    {
-        $unsuspend_cmd  = '-s yes';
-    }
-    else
-    {
-        $unsuspend_cmd  = "";
-    }
+    if($unsuspend) $unsuspend_cmd  = '-s yes';
+    else $unsuspend_cmd  = '';
+    
+    // Server Logging
+    if($server_logging) $log_cmd  = '-l yes';
+    else $log_cmd = '';
     
     ####################################################################
     
@@ -158,7 +158,7 @@ function gpx_remote_server_restart($server_id,$unsuspend=false)
     //
     // Restart the server
     //
-    $ssh_cmd  = '$HOME' . "/scripts/Restart -u $server_username -t $server_type -i $server_ip -p $server_port $opt_pid_file $opt_working_dir $unsuspend_cmd -o '$server_cmd_line'";
+    $ssh_cmd  = '$HOME' . "/scripts/Restart -u $server_username -t $server_type -i $server_ip -p $server_port $opt_pid_file $opt_working_dir $unsuspend_cmd $log_cmd -o '$server_cmd_line'";
     $response = gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
     $response = trim($response);
     

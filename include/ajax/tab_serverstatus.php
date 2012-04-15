@@ -91,6 +91,7 @@ $result_name  = @mysql_query("SELECT
                                   cfg.is_steam,
                                   cfg.query_name,
                                   cfg.short_name,
+                                  servers.logging,
                                   servers.type,
                                   servers.port,
                                   servers.rcon_password,
@@ -113,9 +114,11 @@ while($row_name = mysql_fetch_array($result_name))
     $short_name               = $row_name['short_name'];
     $server_rcon              = $row_name['rcon_password'];
     $server_type              = $row_name['type'];
+    $server_logging           = $row_name['logging'];
 }
 
 // Assign server type
+$smarty->assign('logging', $server_logging);
 $smarty->assign('type', $server_type);
 
 

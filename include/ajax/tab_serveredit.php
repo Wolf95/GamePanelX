@@ -87,6 +87,7 @@ $server_query = "SELECT
                     servers.type,
                     servers.networkid,
                     servers.userid,
+                    servers.logging,
                     servers.status,
                     servers.server,
                     servers.log_file,

@@ -224,6 +224,21 @@
       </tr>
       
       <tr>
+        <td align="right" class="description">Enable Server Logging:&nbsp;</td>
+        <td>
+          <select id="srv_logging" class="select_normal">
+            {if $server_details[db].logging eq "1"}
+                <option value="1" selected>{$lang.yes}</option>
+                <option value="0">{$lang.no}</option>
+            {else}
+                <option value="1">{$lang.yes}</option>
+                <option value="0" selected>{$lang.no}</option>
+            {/if}
+          </select>
+        </td>
+      </tr>
+      
+      <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       

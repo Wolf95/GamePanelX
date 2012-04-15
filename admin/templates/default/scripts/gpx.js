@@ -314,8 +314,9 @@ function saveClientServerDetails()
     var srvClFMan     = $('#srv_client_file_man').val();
     var srvNotes      = encodeURIComponent($('#srv_notes').val());
     var srvCmdLine    = encodeURIComponent($('#srv_cmd_line').val());
+    var srvLogging    = $('#srv_logging').val();
     
-    var addPost       = "&id="+srvID+"&ownerid="+srvOwnerID+"&status="+srvrStatus+"&description="+srvDesc+"&subdomain="+srvSubDom+"&domain="+srvDomain+"&ip="+srvIP+"&port="+srvPort+"&logfile="+srvLogFile+"&maxslots="+srvMaxSlots+"&map="+srvMap+"&exe="+srvExe+"&workingdir="+srvWorkDir+"&setupdir="+srvSetupDir+"&rcon="+srvRcon+"&clfileman="+srvClFMan+"&notes="+srvNotes+"&cmd_line="+srvCmdLine;
+    var addPost       = "&id="+srvID+"&ownerid="+srvOwnerID+"&status="+srvrStatus+"&description="+srvDesc+"&subdomain="+srvSubDom+"&domain="+srvDomain+"&ip="+srvIP+"&port="+srvPort+"&logfile="+srvLogFile+"&maxslots="+srvMaxSlots+"&map="+srvMap+"&exe="+srvExe+"&workingdir="+srvWorkDir+"&setupdir="+srvSetupDir+"&rcon="+srvRcon+"&clfileman="+srvClFMan+"&notes="+srvNotes+"&cmd_line="+srvCmdLine+"&logging="+srvLogging;
     
     $.ajax({
         type: "GET",
@@ -1095,6 +1096,33 @@ function runSteamUpdate(serverID)
             {
                 alert("Oops: "+html);
             }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert("Error: "+errorThrown);
+        }
+    });
+}
+
+// View Server Log
+function viewServerLog(serverID)
+{
+    if(serverID == "")
+    {
+        alert("No server ID specified!");
+        return false;
+    }
+    
+    $.ajax({
+        type: "GET",
+        url: "../include/ajdb.php",
+        data: "a=view_srv_log&id="+serverID,
+        beforeSend:function(){
+            // Lose the button
+            $('#view_log_btn').fadeOut('fast');
+            $('#view_log_box').show();
+        },
+        success: function(html){
+            $('#view_log_box').val(html).animate({ scrollTop: $("#view_log_box").height() });
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert("Error: "+errorThrown);

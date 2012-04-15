@@ -805,4 +805,124 @@ function gpx_remote_server_move_local($server_id,$new_userid,$new_ip,$new_port)
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+// View a server log
+//
+function gpx_remote_server_viewlog($server_id)
+{
+    require(GPX_DOCROOT . '/include/db.php');
+    require(GPX_DOCROOT . '/include/functions/ssh.php');
+    
+    // Encryption Key
+    $enc_key = $config['encrypt_key'];
+    
+    // Escape all given values
+    $safe_id = mysql_real_escape_string($server_id);
+    
+    ####################################################################
+
+    // Get information for this Game/Voice Server
+    $query_gameinfo = "SELECT 
+                          servers.port,
+                          servers.type,
+                          clients.username,
+                          network.ip 
+                        FROM servers 
+                        LEFT JOIN clients ON 
+                          servers.userid = clients.id 
+                        LEFT JOIN network ON 
+                          servers.networkid = network.id 
+                        WHERE servers.id = '$safe_id'";
+    $result_gameinfo = @mysql_query($query_gameinfo) or die('<center><b>Error:</b> <i>remote.php</i>: Failed to get Game/Voice Server info!</center>');
+    
+    while($row_gameinfo = mysql_fetch_array($result_gameinfo))
+    {
+        $server_ip        = $row_gameinfo['ip'];
+        $server_port      = $row_gameinfo['port'];
+        $server_type      = $row_gameinfo['type'];
+        $server_username  = $row_gameinfo['username'];
+    }
+
+    ####################################################################
+
+    // Get new userid's username
+    $result_newuser = @mysql_query("SELECT username FROM clients WHERE id = '$new_userid'") or die('<center><b>Error:</b> <i>remote.php</i>: Failed to get new username!</center>');
+    
+    while($row_newuser = mysql_fetch_array($result_newuser))
+    {
+        $new_username = $row_newuser['username'];
+    }
+
+    ####################################################################
+
+
+    // Find out if this server's IP is a Physical Server or not
+    $result_phys = @mysql_query("SELECT physical,parentid FROM network WHERE ip = '$server_ip'") or die('<center><b>Error:</b> <i>remote.php</i>: Failed to check if server is physical!</center>');
+    
+    while($row_phys = mysql_fetch_array($result_phys))
+    {
+        $is_physical    = $row_phys['physical'];
+        $phys_parentid  = $row_phys['parentid'];
+    }
+    
+    ###################################################################
+    
+    
+    // IP is Physical, use this IP to get network info
+    if($is_physical == 'Y')
+    {
+        $sql_where = "WHERE ip = '$server_ip'";
+    }
+    // IP is regular, use this IP's Parent ID for network info
+    else
+    {
+        $sql_where = "WHERE id = '$phys_parentid'";
+    }
+    
+
+    // Get server info
+    $query_server =  "SELECT 
+                        ip,
+                        AES_DECRYPT(conn_user, '$enc_key') AS conn_user,
+                        AES_DECRYPT(conn_pass, '$enc_key') AS conn_pass,
+                        AES_DECRYPT(conn_port, '$enc_key') AS conn_port 
+                      FROM network 
+                      $sql_where";
+    
+    // Get info for this server
+    $result_server = @mysql_query($query_server) or die('<center><b>Error:</b> <i>remote.php</i>: Failed to get Network Server info!</center>');
+
+    while($row_server = mysql_fetch_array($result_server))
+    {
+        $conn_ip    = $row_server['ip'];
+        $conn_user  = $row_server['conn_user'];
+        $conn_pass  = $row_server['conn_pass'];
+        $conn_port  = $row_server['conn_port'];
+    }
+    
+    ####################################################################
+    
+    // Move the server
+    $ssh_cmd = 'tail $HOME' . "/accounts/$server_username/$server_type/$server_ip\:$server_port/.gpxsrvlog -n50";
+    
+    $result_cmd = gpx_ssh_exec($conn_ip,$conn_port,$conn_user,$conn_pass,$ssh_cmd,true);
+    
+    return $result_cmd;
+}
+
+
 ?>

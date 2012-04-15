@@ -141,6 +141,18 @@ function rconKickCS(serverID)
 
 <table border="0" cellpadding="0" cellspacing="0" align="center" width="500" style="margin-top:10px;">
   
+  {if $logging}
+  <tr>
+    <td><b>View Server Log:</b></td>
+    <td id="srv_log_td">
+        <input type="button" id="view_log_btn" value="Click to view" onClick="javascript:viewServerLog({$srvid});" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><textarea id="view_log_box" style="display:none;width:100%;height:120px;border:1px solid #CCC;background:#FFF;font-family:Arial;font-size:8pt;" readonly>Loading ...</textarea></td>
+  </tr>
+  {/if}
+  
   {if $is_steam eq "Y"}
   <tr>
     <td><b>Update Server:</b></td>

@@ -103,7 +103,8 @@ $allowed_reqs = array('createserver_cmdline',
                       'createsrv_check_net',
                       'createsrv_start',
                       'template_info',
-                      'steam_update');
+                      'steam_update',
+                      'view_srv_log');
 
 
 ########################################################################

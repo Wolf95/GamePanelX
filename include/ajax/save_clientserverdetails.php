@@ -43,6 +43,7 @@ else $is_admin  = false;
 // Escape/fix everything
 $url_srvid          = mysql_real_escape_string($_GET['id']);
 $url_ownerid        = mysql_real_escape_string($_GET['ownerid']);
+$url_logging        = mysql_real_escape_string($_GET['logging']);
 $url_status         = mysql_real_escape_string(htmlspecialchars($_GET['status']));
 $url_description    = mysql_real_escape_string(htmlspecialchars($_GET['description']));
 $url_subdomain      = mysql_real_escape_string(htmlspecialchars($_GET['subdomain']));
@@ -65,6 +66,7 @@ if($is_admin)
 {
     @mysql_query("UPDATE servers SET 
                       networkid       = '$url_networkid',
+                      logging         = '$url_logging',
                       userid          = '$url_ownerid',
                       status          = '$url_status',
                       description     = '$url_description',
