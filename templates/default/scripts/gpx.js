@@ -1034,3 +1034,46 @@ function saveTxtFile(serverID)
         alert("ERROR: No serverid provided");
     }
 }
+
+function confirmDeleteFile(srvID,prevDir,file,keyID)
+{
+    if(srvID == "" || file == "")
+    {
+        alert("Required values were left out!");
+        return false;
+    }
+    if(prevDir == "") var prevDir = "";
+    var answer = confirm("Are you sure?\n\nDelete this file?");
+    
+    if(answer)
+    {
+        deleteFile(srvID,prevDir,file,keyID);
+    }
+    else
+    {
+        return false;
+    }
+}
+
+function deleteFile(srvID,prevDir,file,keyID)
+{
+    $.ajax({
+        type: "GET",
+        url: "../include/ajdb.php",
+        data: "a=delete_file&id="+srvID+"&prev_dir="+prevDir+"&file="+file,
+        success: function(html){
+            if(html == 'success')
+            {
+                $('#del_'+keyID).fadeOut();
+            }
+            else
+            {
+                alert("Error: "+html);
+            }
+        },
+        error:function(a,b,c){
+            alert("Ajax Error: "+a+", "+b+", "+c);
+            return false;
+        }
+    });
+}

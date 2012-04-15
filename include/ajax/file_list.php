@@ -74,6 +74,7 @@ if(!$is_admin)
 
 ########################################################################
 
+
 // Use session Previous Dir
 if($url_file && isset($_SESSION['file_prev']))
 {
@@ -232,6 +233,7 @@ foreach($file_list as $single_file=>$item_attr)
         $encode_filename  = base64_encode($file_name);
         
         // Add to array
+        $arr_link[$key]['keyid']              = $key;
         $arr_link[$key]['file_perms']         = $file_perms;
         $arr_link[$key]['file_size']          = formatBytes($file_size_bytes); //number_format($file_size_bytes/(1024*1024),1);
         $arr_link[$key]['file_date']          = date('m/d/Y', $file_last_mod); //$file_date_month . ' ' . $file_date_day . ' ' . $file_year;
@@ -329,6 +331,8 @@ array_multisort($sorter, SORT_DESC, $arr_link);
 
 // Assign array to Smarty
 $smarty->assign('file_list', $arr_link);
+$smarty->assign('prev_dir', $url_prevdir); // Assign hard previous dir
+
 
 
 // Display HTML Page

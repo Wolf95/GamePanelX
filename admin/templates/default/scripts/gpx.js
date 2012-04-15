@@ -314,9 +314,8 @@ function saveClientServerDetails()
     var srvClFMan     = $('#srv_client_file_man').val();
     var srvNotes      = encodeURIComponent($('#srv_notes').val());
     var srvCmdLine    = encodeURIComponent($('#srv_cmd_line').val());
-    var srvLogging    = $('#srv_logging').val();
     
-    var addPost       = "&id="+srvID+"&ownerid="+srvOwnerID+"&status="+srvrStatus+"&description="+srvDesc+"&subdomain="+srvSubDom+"&domain="+srvDomain+"&ip="+srvIP+"&port="+srvPort+"&logfile="+srvLogFile+"&maxslots="+srvMaxSlots+"&map="+srvMap+"&exe="+srvExe+"&workingdir="+srvWorkDir+"&setupdir="+srvSetupDir+"&rcon="+srvRcon+"&clfileman="+srvClFMan+"&notes="+srvNotes+"&cmd_line="+srvCmdLine+"&logging="+srvLogging;
+    var addPost       = "&id="+srvID+"&ownerid="+srvOwnerID+"&status="+srvrStatus+"&description="+srvDesc+"&subdomain="+srvSubDom+"&domain="+srvDomain+"&ip="+srvIP+"&port="+srvPort+"&logfile="+srvLogFile+"&maxslots="+srvMaxSlots+"&map="+srvMap+"&exe="+srvExe+"&workingdir="+srvWorkDir+"&setupdir="+srvSetupDir+"&rcon="+srvRcon+"&clfileman="+srvClFMan+"&notes="+srvNotes+"&cmd_line="+srvCmdLine;
     
     $.ajax({
         type: "GET",
@@ -1103,29 +1102,45 @@ function runSteamUpdate(serverID)
     });
 }
 
-// View Server Log
-function viewServerLog(serverID)
+function confirmDeleteFile(srvID,prevDir,file,keyID)
 {
-    if(serverID == "")
+    if(srvID == "" || file == "")
     {
-        alert("No server ID specified!");
+        alert("Required values were left out!");
         return false;
     }
+    if(prevDir == "") var prevDir = "";
+    var answer = confirm("Are you sure?\n\nDelete this file?");
     
+    if(answer)
+    {
+        deleteFile(srvID,prevDir,file,keyID);
+    }
+    else
+    {
+        return false;
+    }
+}
+
+function deleteFile(srvID,prevDir,file,keyID)
+{
     $.ajax({
         type: "GET",
         url: "../include/ajdb.php",
-        data: "a=view_srv_log&id="+serverID,
-        beforeSend:function(){
-            // Lose the button
-            $('#view_log_btn').fadeOut('fast');
-            $('#view_log_box').show();
-        },
+        data: "a=delete_file&id="+srvID+"&prev_dir="+prevDir+"&file="+file,
         success: function(html){
-            $('#view_log_box').val(html).animate({ scrollTop: $("#view_log_box").height() });
+            if(html == 'success')
+            {
+                $('#del_'+keyID).fadeOut();
+            }
+            else
+            {
+                alert("Error: "+html);
+            }
         },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert("Error: "+errorThrown);
+        error:function(a,b,c){
+            alert("Ajax Error: "+a+", "+b+", "+c);
+            return false;
         }
     });
 }

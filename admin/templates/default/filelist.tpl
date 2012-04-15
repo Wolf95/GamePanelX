@@ -69,7 +69,7 @@
 
 {if $file_list}
 {section name=db loop=$file_list}
-<tr class="normal">
+<tr class="normal" id="del_{$file_list[db].keyid}">
   <td><img src="templates/{$template}/img/fm/{$file_list[db].file_icon}" width="20" height="20" border="0" /></td>
   <td><span style="font-size:9pt;color:red;cursor:pointer;" onClick="javascript:filesLoad('{$srvid}','{$file_list[db].file_enc_name}','0');">{$file_list[db].file_name}</span></td>
   <td>
@@ -83,7 +83,7 @@
   <td>{$file_list[db].file_perms}</td>
   <td align="center">
     {if !$file_list[db].file_is_dir}
-      <a href="javascript:void(0)" onClick='{literal}var answer = confirm("{/literal}{$lang.filemanager_confirm_delete}{literal}"); if (answer) { {/literal} window.location = "configeditor.php?id={$serverid}&p={$file_list[db].file_enc_prev_dir}&f={$file_list[db].file_enc_name}&a=delete"; {literal} }{/literal}'><img src="templates/{$template}/img/fm/delete.png" width="16" height="16" border="0" /></a>
+        <img src="templates/{$template}/img/fm/delete.png" title="Delete File" width="16" height="16" border="0" onClick="javascript:confirmDeleteFile('{$srvid}','{$prev_dir}','{$file_list[db].file_enc_name}','{$file_list[db].keyid}');" style="cursor:pointer;" />
     {else}
       &nbsp;
     {/if}
